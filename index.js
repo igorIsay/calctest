@@ -29,9 +29,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
         }
     }
     
-    document.addEventListener("DOMContentLoaded", ()=>{
+    
         loadList();
-    })
+   
     
     addBtn.addEventListener("click", (e)=>{
         e.preventDefault();
