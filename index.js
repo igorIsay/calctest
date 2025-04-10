@@ -119,8 +119,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
       var layout = {
         showlegend: false,
         autosize: false,
-        width: 1000,
-        height: 1000,
+        width: window.innerWidth < 600 ? 320 : 1000,
+        height: window.innerWidth < 600 ? 320 : 1000,
         margin: {t: 50},
         hovermode: 'closest',
         bargap: 0,
