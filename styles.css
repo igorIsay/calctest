@@ -14,9 +14,10 @@
 
 body {
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
-    align-items: center;
+    justify-content: center;
+    padding-top: 20px;
 }
 
 /* Container Styling */
@@ -137,23 +138,30 @@ body {
 
 @media screen and (max-width: 600px) {
   .container {
-    width: 90%;
-    padding: 15px 20px;
+    width: 100%;
+    padding: 20px 15px;
+    box-sizing: border-box;
+    border: none;
   }
 
   .input-container {
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     height: auto;
+    width: 100%;
   }
 
   .input-container > input {
     width: 100%;
+    padding: 12px;
+    font-size: 16px;
   }
 
   .input-container > button {
     width: 100%;
-    padding: 8px;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 5px;
   }
 
   .task > input {
