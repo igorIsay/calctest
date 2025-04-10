@@ -22,12 +22,6 @@ body {
 
 /* Container Styling */
 
-.main {
-  display: flex;
-  flex-direction: column;
-}
-
-
 .graph {
   height: 100px;
 }
