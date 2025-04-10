@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
                 <div class="task" id="${i}">
                 <input type="text" value="X: ${list[i].x} - Y: ${list[i].y}" readonly class="inputTaskItem"
                 onchange="changed(this)">
-                <i class="bx bx-trash"></i>
+                <button class="deleteBtn"><i class="bx bx-trash"></i></button>
                 </div>
             `;
     
