@@ -76,7 +76,7 @@
                       <input
                         type="text"
                         value=${item.x}
-                        readonly="${item.isEditing ? "false" : "readonly"}"
+                        ${item.isEditing ? "" : "readonly"}
                         class="inputTaskItem" />
                     </div>
                     <div class="task-item">
@@ -84,7 +84,7 @@
                       <input
                         type="text"
                         value=${item.y}
-                        readonly="${item.isEditing ? "false" : "readonly"}"
+                        ${item.isEditing ? "" : "readonly"}
                         class="inputTaskItem" />
                     </div>
 
