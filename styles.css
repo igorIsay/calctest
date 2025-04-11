@@ -135,6 +135,21 @@ body {
   gap: 8px;
 }
 
+.inputTaskItem[readonly] {
+  border: none;
+  background-color: transparent;
+  cursor: default;
+  outline: none;
+}
+
+.inputTaskItem[readonly]:focus-visible {
+  border: none;
+  background-color: transparent;
+  cursor: default;
+  outline: none;
+}
+
+
 @media screen and (max-width: 600px) {
   .container {
     width: 100%;
