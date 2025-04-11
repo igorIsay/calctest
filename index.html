@@ -1,31 +1,186 @@
-<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-<link href='styles.css' rel='stylesheet'>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-<script src='https://cdn.plot.ly/plotly-3.0.1.min.js'></script>
-<script src='index.js'></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preact Graph Plotter</title>
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link href='styles.css' rel='stylesheet'>
+  <script src='https://cdn.plot.ly/plotly-3.0.1.min.js'></script>
+</head>
+<body>
+  <div id="app"></div>
 
-<div class="main">
+  <script type="module">
+    import { h, render } from 'https://esm.sh/preact';
+    import { useState, useEffect } from 'https://esm.sh/preact/hooks';
+    import htm from 'https://esm.sh/htm';
 
-  <div class="container">
+    const html = htm.bind(h);
 
-    <div class="input-container">
-      <input type="text" placeholder="X" id="xValue">
-      <input type="text" placeholder="Y" id="yValue">
-      <button id="addBtn">Add</button>
-    </div>
+    function App() {
+      const [list, setList] = useState(() => JSON.parse(localStorage.getItem("DB")) ?? []);
 
-    <div class="taskContainer">
-      <div class="taskList" id="taskList"></div>
-      <div class="effect"></div> 
-    </div>    
-  </div>
-  
-    <div class="graph">
-    <div id='myDiv'></div>
-  </div>
-  
-  
-  
-</div>
+      useEffect(() => {
+        localStorage.setItem("DB", JSON.stringify(list));
+        renderGraph(list);
+      }, [list]);
+
+      const addPoint = () => {
+        const x = document.getElementById("xValue").value;
+        const y = document.getElementById("yValue").value;
+        if (x && y) {
+          setList([...list, { x, y }]);
+          document.getElementById("xValue").value = "";
+          document.getElementById("yValue").value = "";
+        }
+      };
+
+      const deletePoint = (index) => {
+        const updated = [...list];
+        updated.splice(index, 1);
+        setList(updated);
+      };
+
+      const editPoint = (index) => {
+        const updatedList = [...list];
+        updatedList[index].isEditing = true;
+        setList(updatedList);
+      };
+
+      const savePoint = (index, newX, newY) => {
+        const updatedList = [...list];
+        updatedList[index].x = newX;
+        updatedList[index].y = newY;
+        updatedList[index].isEditing = false;
+        setList(updatedList);
+      };
+
+      console.log(list)
+
+      return html`
+        <div class="main">
+          <div class="container">
+            <div class="input-container">
+              <input type="text" placeholder="X" id="xValue" />
+              <input type="text" placeholder="Y" id="yValue" />
+              <button onClick=${addPoint}>Add</button>
+            </div>
+
+            <div class="taskContainer">
+              <div class="taskList">
+                ${list.map((item, i) => html`
+                  <div class="task">
+                    <div class="task-item">
+                      <div>X: </div>
+                      <input
+                        type="text"
+                        value=${item.x}
+                        readonly="${item.isEditing ? "false" : "readonly"}"
+                        class="inputTaskItem" />
+                    </div>
+                    <div class="task-item">
+                      <div>Y: </div>
+                      <input
+                        type="text"
+                        value=${item.y}
+                        readonly="${item.isEditing ? "false" : "readonly"}"
+                        class="inputTaskItem" />
+                    </div>
+
+                    <div>
+                      <button
+                        class="editBtn"
+                        onClick=${() => item.isEditing ? savePoint(i, item.inputX, item.inputY) : editPoint(i)}>
+                        <i class="bx ${item.isEditing ? "bx-save" : "bx-edit"}"></i>
+                      </button>
+                      <button class="deleteBtn" onClick=${() => deletePoint(i)}>
+                        <i class="bx bx-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                `)}
+              </div>
+              <div class="effect"></div>
+            </div>
+          </div>
+
+          <div class="graph">
+            <div id="myDiv"></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGraph(list) {
+      const x = list.map(item => item.x);
+      const y = list.map(item => item.y);
+
+      const trace1 = {
+        x,
+        y,
+        mode: 'markers',
+        name: 'points',
+        marker: {
+          color: 'rgb(102,0,0)',
+          size: 5,
+          opacity: 0.9
+        },
+        type: 'scatter'
+      };
+
+      const trace2 = {
+        x,
+        y,
+        name: 'density',
+        ncontours: 5,
+        colorscale: 'Greens',
+        reversescale: true,
+        showscale: false,
+        type: 'histogram2dcontour',
+        opacity: 0.3
+      };
+
+      const layout = {
+        showlegend: false,
+        autosize: false,
+        width: window.innerWidth < 600 ? 320 : 1000,
+        height: window.innerWidth < 600 ? 320 : 1000,
+        margin: { t: 50 },
+        hovermode: 'closest',
+        bargap: 0,
+        xaxis: {
+          showgrid: true,
+          zeroline: true,
+          fixedrange: true,
+          range: [-15, 15],
+          nticks: 60,
+        },
+        yaxis: {
+          showgrid: true,
+          zeroline: true,
+          fixedrange: true,
+          range: [-15, 15],
+          nticks: 60,
+        },
+        images: [{
+          name: 'watermark_1',
+          source: "https://media-hosting.imagekit.io/cbf3cc77f83449a2/T64.png?Expires=1838910749&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=p6irBWpJO-pHU7L-e3D7BQ~F9EwENIOxKyupOxvDXq0~fLKqGkesgagGCMf2rNNMYLoMuXo-Mx2-fJ5zvxrTbNIwXkRua5kJiqP2ueE-LNuNpraPFNFQQwvTs7HtFS2GfzUfm7OwKWRlhfPw3DC4J5FTwB~7GOexAQRabjK08-FYrtq0Nhdl08gHCRCv6gQWNP6aqgq5HgnyYzHSBvR5Xxrh9-1Xbi~aK2Yp0Ger-haHOiee83EDPZ3hSNbVhpogLys~GorJw8x2AsPrdFguL2H4efLQIX-enartoJjn-d4xIGHxDR3FEAfxqdERSR7GuT8r2EfirFnufktcJPPJzA__",
+          xref: "paper",
+          yref: "paper",
+          x: 0.433,
+          y: 0.7,
+          sizex: 0.13,
+          sizey: 0.8,
+          opacity: 0.6,
+          layer: "below"
+        }]
+      };
+
+      Plotly.newPlot('myDiv', [trace1, trace2], layout);
+    }
+
+    render(html`<${App} />`, document.getElementById('app'));
+  </script>
+</body>
+</html>

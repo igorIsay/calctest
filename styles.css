@@ -51,6 +51,10 @@ body {
 
 /* Input Container Styling */
 
+.inputTaskItem.readonly {
+  background: black;
+}
+
 
 .input-container {
     height: 25px;
@@ -98,7 +102,7 @@ body {
   border: 2px solid var(--color2);
   margin-left: 10px;
   scrollbar-width: thin;
-    
+
 }
 
 .taskContainer .taskList::-webkit-scrollbar-thumb {
@@ -113,11 +117,6 @@ body {
   bottom: 0;
 }
 
-.lthr {
-  text-decoration: line-through;
-  text-decoration-thickness: 2px;
-}
-
 .task {
   display: flex;
   justify-content: space-between;
@@ -128,6 +127,12 @@ body {
   border: none;
   outline: none;
   font-size: 15px;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 @media screen and (max-width: 600px) {
@@ -172,4 +177,3 @@ body {
     height: auto !important;
   }
 }
-
