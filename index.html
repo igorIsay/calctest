@@ -48,15 +48,11 @@
         setList(updatedList);
       };
 
-      const savePoint = (index, newX, newY) => {
-        const updatedList = [...list];
-        updatedList[index].x = newX;
-        updatedList[index].y = newY;
-        updatedList[index].isEditing = false;
-        setList(updatedList);
+      const saveEdit = (index, newX, newY) => {
+        const updated = [...list];
+        updated[index] = { x: newX, y: newY, isEditing: false };
+        setList(updated);
       };
-
-      console.log(list)
 
       return html`
         <div class="main">
@@ -74,6 +70,7 @@
                     <div class="task-item">
                       <div>X: </div>
                       <input
+                        id="x-${i}"
                         type="text"
                         value=${item.x}
                         readOnly=${item.isEditing ? 0 : 1}
@@ -82,6 +79,7 @@
                     <div class="task-item">
                       <div>Y: </div>
                       <input
+                        id="y-${i}"
                         type="text"
                         value=${item.y}
                         readOnly=${item.isEditing ? 0 : 1}
@@ -89,11 +87,23 @@
                     </div>
 
                     <div>
-                      <button
-                        class="editBtn"
-                        onClick=${() => item.isEditing ? savePoint(i, item.inputX, item.inputY) : editPoint(i)}>
-                        <i class="bx ${item.isEditing ? "bx-save" : "bx-edit"}"></i>
-                      </button>
+                      ${item.isEditing
+                        ? html`
+                            <button onClick=${() => {
+                              const newX = document.getElementById(`x-${i}`).value;
+                              const newY = document.getElementById(`y-${i}`).value;
+                              saveEdit(i, newX, newY);
+                            }}>
+                              <i class="bx bx-save"></i>
+                            </button>
+                          `
+                        : html`
+                            <button onClick=${() => editPoint(i)}>
+                              <i class="bx bx-edit"></i>
+                            </button>
+                          `
+                      }
+
                       <button class="deleteBtn" onClick=${() => deletePoint(i)}>
                         <i class="bx bx-trash"></i>
                       </button>
